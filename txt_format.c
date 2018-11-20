@@ -22,7 +22,11 @@
 #include "request.h"
 #include "simple_api.h"
 #include "debug.h"
+#include "util.h"
 #include "txt_format.h"
+
+#include <time.h>
+
 
 #define MAX_VARIABLE_SIZE 256
 

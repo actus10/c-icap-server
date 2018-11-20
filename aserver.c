@@ -128,7 +128,7 @@ int main(int argc, char **argv)
 #if ! defined(_WIN32)
     __log_error = (void (*)(void *, const char *,...)) log_server;     /*set c-icap library log  function */
 #else
-    __vlog_error = vlog_server;        /*set c-icap library  log function */
+    __vlog_error = (void (*)(void *, const char *, va_list)) vlog_server; /* set c-icap library  log function */
 #endif
 
     mem_init();
@@ -184,6 +184,8 @@ int main(int argc, char **argv)
     post_init_modules();
     post_init_services();
     start_server();
+#if ! defined(_WIN32)
     clear_pid(CI_CONF.PIDFILE);
+#endif
     return 0;
 }

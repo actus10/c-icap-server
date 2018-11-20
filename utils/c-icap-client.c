@@ -37,7 +37,6 @@
 #include "net_io_ssl.h"
 #endif
 
-
 /*Must declared ....*/
 int CONN_TIMEOUT = 300;
 
@@ -294,7 +293,7 @@ int main(int argc, char **argv)
 #if ! defined(_WIN32)
     __log_error = (void (*)(void *, const char *,...)) log_errors;     /*set c-icap library log  function */
 #else
-    __vlog_error = vlog_errors;        /*set c-icap library  log function for win32..... */
+    __vlog_error = (void (*)(void *, const char *, va_list)) vlog_errors; /* set c-icap library  log function for win32..... */
 #endif
 
 #if defined(USE_OPENSSL)

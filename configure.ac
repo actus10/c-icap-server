@@ -20,6 +20,7 @@ AM_INIT_AUTOMAKE([subdir-objects])
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_CANONICAL_HOST
+AC_CANONICAL_BUILD
 
 AC_USE_SYSTEM_EXTENSIONS
 
@@ -90,6 +91,14 @@ case "$host_os" in
 	THREADS_LDFLAGS="";
 	iscygwin="yes"
       ;;
+
+      *mingw32*)
+        iswin32="yes"
+        CFLAGS="-std=c99 -D_REENTRANT $CFLAGS"
+        LDFLAGS="-no-undefined"
+        LIBS="-lws2_32"
+      ;;
+
       *)
       	CFLAGS="-D_REENTRANT $CFLAGS"
 	THREADS_LDADD="-lpthread"
@@ -973,11 +982,6 @@ AC_SUBST(PTHREADS_RWLOCK)
 LIBS=$OLD_LIBS
 LIBS="$LIBS $EXTRALIBS"
 
-#Configure common flags
-MODULES_LIBADD=""
-if test a"$iscygwin" != a; then
-     MODULES_LIBADD="-L../../ -licapapi"
-fi
 MODULES_CFLAGS="$INVISIBILITY_CFLAG -DCI_BUILD_MODULE"
 AC_SUBST(MODULES_LIBADD)
 AC_SUBST(MODULES_CFLAGS)
@@ -987,6 +991,7 @@ AM_CONDITIONAL(ISCYGWIN,[test a"$iscygwin" != a])
 
 # Now determine which modules will going to build .....
 
+AM_CONDITIONAL(IS_WIN32, [test "a$iswin32" != "a"])
 AM_CONDITIONAL(USE_OPENSSL, [test a"$openssl" != "ano"])
 AM_CONDITIONAL(USE_REGEX, [test a"$pcre" = "ayes" -o a"$posix_regex" = "ayes"])
 AM_CONDITIONAL(USEPERL,[test a"$perlcore" != a])

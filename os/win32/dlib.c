@@ -26,9 +26,8 @@
 HMODULE ci_module_load(const char *module_file, const char *default_path)
 {
     HMODULE handle;
-    WCHAR path[CI_MAX_PATH];
-    WCHAR c;
-    int len, i = 0;
+    char path[CI_MAX_PATH];
+    int len;
     DWORD load_flags = LOAD_WITH_ALTERED_SEARCH_PATH;
 
     if (module_file[0] != '/') {
@@ -48,16 +47,14 @@ HMODULE ci_module_load(const char *module_file, const char *default_path)
             load_flags = LOAD_LIBRARY_SEARCH_DEFAULT_DIRS;
     } else
         strncpy(path, module_file, CI_MAX_PATH - 1);
-
-
     path[CI_MAX_PATH - 1] = '\0';
 
-    handle = LoadLibraryEx(filename, NULL, load_flags);
+    handle = LoadLibraryEx(path, NULL, load_flags);
     if (!handle)
-        handle = LoadLibraryEx(filename, NULL, NULL);
+        handle = LoadLibraryEx(path, NULL, 0);
 
     if (!handle) {
-        ci_debug_printf(1, "Error loading module %s:%d\n", module_file,
+        ci_debug_printf(1, "Error loading module %s:%lu\n", module_file,
                         GetLastError());
         return NULL;
     }

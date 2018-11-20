@@ -24,7 +24,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <signal.h>
+//#include <signal.h>
 #include <assert.h>
 #include <time.h>
 #include <fcntl.h>
@@ -95,6 +95,7 @@ void print_stats()
     printf("Running for %u seconds\n", (unsigned int) rtime);
 }
 
+#ifndef _WIN32
 static void sigint_handler(int sig)
 {
     int i = 0;
@@ -125,6 +126,7 @@ static void sigint_handler(int sig)
 
     exit(0);
 }
+#endif
 
 void str_trim(char *str)
 {
@@ -733,11 +735,13 @@ int main(int argc, char **argv)
 #if ! defined(_WIN32)
     __log_error = (void (*)(void *, const char *,...)) log_errors;     /*set c-icap library log  function */
 #else
-    __vlog_error = vlog_errors;        /*set c-icap library  log function for win32..... */
+    __vlog_error = (void (*)(void *, const char *, va_list)) vlog_errors;        /*set c-icap library  log function for win32..... */
 #endif
 
+#if ! defined(_WIN32)
     signal(SIGPIPE, SIG_IGN);
     signal(SIGINT, sigint_handler);
+#endif
 
     time(&START_TIME);
     srand((int) START_TIME);
